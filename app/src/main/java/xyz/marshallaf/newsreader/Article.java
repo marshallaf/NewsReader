@@ -1,5 +1,6 @@
 package xyz.marshallaf.newsreader;
 
+import android.net.Uri;
 import android.util.Log;
 
 import java.net.MalformedURLException;
@@ -21,7 +22,7 @@ public class Article {
     private String mAuthor;
     private String mPublished;
     private String mSection;
-    private URL mArticleUrl;
+    private Uri mArticleUrl;
     private URL mImageUrl;
 
     public Article(String title, String subtitle, String author,
@@ -31,7 +32,7 @@ public class Article {
         mAuthor = author;
         mPublished = published;
         mSection = section;
-        mArticleUrl = parseUrl(articleUrl);
+        mArticleUrl = Uri.parse(articleUrl);
         mImageUrl = parseUrl(imageUrl);
     }
 
@@ -65,7 +66,7 @@ public class Article {
         return mSection;
     }
 
-    public URL getArticleUrl() {
+    public Uri getArticleUrl() {
         return mArticleUrl;
     }
 
