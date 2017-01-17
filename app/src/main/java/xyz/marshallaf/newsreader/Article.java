@@ -45,31 +45,31 @@ public class Article {
         return url;
     }
 
-    public String getmTitle() {
+    public String getTitle() {
         return mTitle;
     }
 
-    public String getmSubtitle() {
+    public String getSubtitle() {
         return mSubtitle;
     }
 
-    public String getmAuthor() {
+    public String getAuthor() {
         return mAuthor;
     }
 
-    public String getmPublished() {
+    public String getPublished() {
         return mPublished;
     }
 
-    public String getmSection() {
+    public String getSection() {
         return mSection;
     }
 
-    public URL getmArticleUrl() {
+    public URL getArticleUrl() {
         return mArticleUrl;
     }
 
-    public URL getmImageUrl() {
+    public URL getImageUrl() {
         return mImageUrl;
     }
 }
