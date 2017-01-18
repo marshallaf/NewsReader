@@ -6,8 +6,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 /**
@@ -21,8 +27,12 @@ public final class Utils {
 
     private static String testJSON = "[{\"id\":\"sport/2017/jan/16/obama-chicago-cubs-white-house-visit\",\"type\":\"article\",\"sectionId\":\"sport\",\"sectionName\":\"Sport\",\"webPublicationDate\":\"2017-01-16T23:11:47Z\",\"webTitle\":\"'Sports has changed attitudes': Obama welcomes Chicago Cubs to White House\",\"webUrl\":\"https://www.theguardian.com/sport/2017/jan/16/obama-chicago-cubs-white-house-visit\",\"apiUrl\":\"https://content.guardianapis.com/sport/2017/jan/16/obama-chicago-cubs-white-house-visit\",\"fields\":{\"trailText\":\"The president is a White Sox fan but he marked the Cubs’ World Series win with delight, celebrating sometimes fragile unity at his final White House function\",\"byline\":\"David Smith in Washington\",\"thumbnail\":\"https://media.guim.co.uk/217fa11dd0753aceeab7cd3a1e0ceb3c129fcbac/0_64_5067_3040/500.jpg\"},\"isHosted\":false},{\"id\":\"football/2017/jan/16/everton-tom-davies-leighton-baines-manchester-city\",\"type\":\"article\",\"sectionId\":\"football\",\"sectionName\":\"Football\",\"webPublicationDate\":\"2017-01-16T22:30:21Z\",\"webTitle\":\"Everton’s Tom Davies confirms Leighton Baines’ view of a proper player\",\"webUrl\":\"https://www.theguardian.com/football/2017/jan/16/everton-tom-davies-leighton-baines-manchester-city\",\"apiUrl\":\"https://content.guardianapis.com/football/2017/jan/16/everton-tom-davies-leighton-baines-manchester-city\",\"fields\":{\"trailText\":\"How 18-year-old Davies has handled first-team life at Goodison Park has impressed Baines, who has seen other young players be overwhelmed early in their careers\",\"byline\":\"Andy Hunter\",\"thumbnail\":\"https://media.guim.co.uk/848115e926c463a504b17b2fdcf283bb4168024e/0_80_1984_1190/500.jpg\"},\"isHosted\":false},{\"id\":\"football/2017/jan/16/sam-allardyce-crystal-palace-fear-failure-relegation-premier-league\",\"type\":\"article\",\"sectionId\":\"football\",\"sectionName\":\"Football\",\"webPublicationDate\":\"2017-01-16T22:30:21Z\",\"webTitle\":\"Sam Allardyce motivated by fear of failure at Crystal Palace\",\"webUrl\":\"https://www.theguardian.com/football/2017/jan/16/sam-allardyce-crystal-palace-fear-failure-relegation-premier-league\",\"apiUrl\":\"https://content.guardianapis.com/football/2017/jan/16/sam-allardyce-crystal-palace-fear-failure-relegation-premier-league\",\"fields\":{\"trailText\":\"Sam Allardyce is still searching for his first win after five games at the club, who are one place above the Premier League relegation zone\",\"byline\":\"Dominic Fifield\",\"thumbnail\":\"https://media.guim.co.uk/e8eb23dabf37912c2fa5020f182425c0fba04a59/0_182_4576_2745/500.jpg\"},\"isHosted\":false},{\"id\":\"football/2017/jan/16/juventus-unveil-new-crest-serie-a\",\"type\":\"article\",\"sectionId\":\"football\",\"sectionName\":\"Football\",\"webPublicationDate\":\"2017-01-16T21:57:22Z\",\"webTitle\":\"Juventus unveil bold new club crest at ceremony in Turin\",\"webUrl\":\"https://www.theguardian.com/football/2017/jan/16/juventus-unveil-new-crest-serie-a\",\"apiUrl\":\"https://content.guardianapis.com/football/2017/jan/16/juventus-unveil-new-crest-serie-a\",\"fields\":{\"trailText\":\"Juventus have unveiled a new club crest – with club president Andrea Agnelli claiming the unusual, minimalist design has been one year in the making\",\"byline\":\"Guardian sport\",\"thumbnail\":\"https://media.guim.co.uk/7bb546b87881548cb3d47cbf7ac5b980b12a568a/37_44_862_517/500.jpg\"},\"isHosted\":false},{\"id\":\"football/2017/jan/16/swansea-tom-carroll-martin-olsson-signings\",\"type\":\"article\",\"sectionId\":\"football\",\"sectionName\":\"Football\",\"webPublicationDate\":\"2017-01-16T21:57:04Z\",\"webTitle\":\"Swansea close in on Tom Carroll and Martin Olsson signings\",\"webUrl\":\"https://www.theguardian.com/football/2017/jan/16/swansea-tom-carroll-martin-olsson-signings\",\"apiUrl\":\"https://content.guardianapis.com/football/2017/jan/16/swansea-tom-carroll-martin-olsson-signings\",\"fields\":{\"trailText\":\"Tom Carroll is expected to join Swansea City from Tottenham for around £4.5m, with Norwich left-back Martin Olsson also set to arrive in south Wales to bolster their defence\",\"byline\":\"Guardian sport\",\"thumbnail\":\"https://media.guim.co.uk/0ee6951239811344d762c28de7abfea4aa39d616/0_125_2334_1400/500.jpg\"},\"isHosted\":false},{\"id\":\"football/2017/jan/16/louis-van-gaal-manchester-united-retire\",\"type\":\"article\",\"sectionId\":\"football\",\"sectionName\":\"Football\",\"webPublicationDate\":\"2017-01-16T20:49:30Z\",\"webTitle\":\"Ex-Manchester United manager Louis van Gaal to retire for ‘family reasons’\",\"webUrl\":\"https://www.theguardian.com/football/2017/jan/16/louis-van-gaal-manchester-united-retire\",\"apiUrl\":\"https://content.guardianapis.com/football/2017/jan/16/louis-van-gaal-manchester-united-retire\",\"fields\":{\"trailText\":\"Louis van Gaal has confirmed he intends to retire from coaching despite the former Manchester United manager receiving an offer to manage a club in Asia where he would have earned £44m in three seasons\",\"byline\":\"Guardian sport\",\"thumbnail\":\"https://media.guim.co.uk/f5335bf8bf5620da3d5f18a391cd2e87faaf3d72/0_80_3500_2100/500.jpg\"},\"isHosted\":false},{\"id\":\"football/2017/jan/16/lincoln-city-fa-cup-replay-with-ipswich\",\"type\":\"article\",\"sectionId\":\"football\",\"sectionName\":\"Football\",\"webPublicationDate\":\"2017-01-16T20:36:00Z\",\"webTitle\":\"Lincoln going for gold in lucrative FA Cup replay with Ipswich\",\"webUrl\":\"https://www.theguardian.com/football/2017/jan/16/lincoln-city-fa-cup-replay-with-ipswich\",\"apiUrl\":\"https://content.guardianapis.com/football/2017/jan/16/lincoln-city-fa-cup-replay-with-ipswich\",\"fields\":{\"trailText\":\"After a draw at Portman Road, Lincoln City take on Ipswich Town in a third round replay, a match eagerly anticipated by the non-league club’s ‘gold members’\",\"byline\":\"Paul MacInnes\",\"thumbnail\":\"https://media.guim.co.uk/2cdf63e1cce77bae141f70a39734041011089bfa/0_190_3619_2172/500.jpg\"},\"isHosted\":false},{\"id\":\"books/2017/jan/16/william-peter-blatty-obituary\",\"type\":\"article\",\"sectionId\":\"books\",\"sectionName\":\"Books\",\"webPublicationDate\":\"2017-01-16T18:45:15Z\",\"webTitle\":\"William Peter Blatty obituary\",\"webUrl\":\"https://www.theguardian.com/books/2017/jan/16/william-peter-blatty-obituary\",\"apiUrl\":\"https://content.guardianapis.com/books/2017/jan/16/william-peter-blatty-obituary\",\"fields\":{\"trailText\":\"Writer best known for his novel The Exorcist, adapted into a hugely successful horror film\",\"byline\":\"Michael Carlson\",\"thumbnail\":\"https://media.guim.co.uk/c264cdf467fcbdc33fa30df20caf9c64c2900cde/188_848_4161_2495/500.jpg\"},\"isHosted\":false},{\"id\":\"football/2017/jan/16/diego-costa-chelsea-antonio-conte\",\"type\":\"article\",\"sectionId\":\"football\",\"sectionName\":\"Football\",\"webPublicationDate\":\"2017-01-16T18:00:31Z\",\"webTitle\":\"Diego Costa will not return to Chelsea team unless his attitude improves\",\"webUrl\":\"https://www.theguardian.com/football/2017/jan/16/diego-costa-chelsea-antonio-conte\",\"apiUrl\":\"https://content.guardianapis.com/football/2017/jan/16/diego-costa-chelsea-antonio-conte\",\"fields\":{\"trailText\":\"Antonio Conte has no plans to hold clear-the-air talks with Diego Costa and the onus will be on the forward in training to prove he warrants a swift restoration to the Chelsea side\",\"byline\":\"Dominic Fifield\",\"thumbnail\":\"https://media.guim.co.uk/af5e618cec78a19cc6659da60252dccb7e21724e/26_85_2496_1498/500.jpg\"},\"isHosted\":false},{\"id\":\"football/live/2017/jan/16/ivory-coast-v-togo-afcon-2017-live\",\"type\":\"liveblog\",\"sectionId\":\"football\",\"sectionName\":\"Football\",\"webPublicationDate\":\"2017-01-16T17:57:56Z\",\"webTitle\":\"Ivory Coast 0-0 Togo: Afcon 2017 – as it happened\",\"webUrl\":\"https://www.theguardian.com/football/live/2017/jan/16/ivory-coast-v-togo-afcon-2017-live\",\"apiUrl\":\"https://content.guardianapis.com/football/live/2017/jan/16/ivory-coast-v-togo-afcon-2017-live\",\"fields\":{\"trailText\":\" The defending champions were held to a goalless draw by Togo in a cautious opening match \",\"byline\":\"Rob Smyth\",\"thumbnail\":\"https://media.guim.co.uk/c2ede92fc4b8467e1311f10d745043096dd28cfa/0_20_2556_1534/500.jpg\"},\"isHosted\":false}]";
 
-    public static ArrayList<Article> getArticlesFromJSON() throws JSONException {
-        JSONArray results = new JSONArray(testJSON);
+    public static ArrayList<Article> getArticlesFromJSON(String jsonString) throws JSONException {
+        // nothing to parse
+        if (jsonString == null) return null;
+
+        JSONObject data = new JSONObject(jsonString);
+        JSONArray results = data.getJSONObject("response").getJSONArray("results");
         ArrayList<Article> articles = new ArrayList<>(results.length());
 
         for (int i = 0; i < results.length(); i++) {
@@ -50,7 +60,92 @@ public final class Utils {
         return url;
     }
 
-    public static ArrayList<Article> fetchNews() {
+    public static ArrayList<Article> fetchNews(String urlString) {
+        URL url = parseUrl(urlString);
 
+        // if url is null do nothing
+        if (url == null) return null;
+
+        // make api request
+        String jsonString = null;
+        try {
+            jsonString = makeHttpRequest(url);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Problem closing stream", e);
+        }
+
+        // parse json
+        ArrayList<Article> articles = null;
+        try {
+            articles = getArticlesFromJSON(jsonString);
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "Unable to parse JSON", e);
+        }
+
+        return articles;
+    }
+
+    /**
+     * Method to open a connection to a URL and return the data received as a {@link String}.
+     *
+     * @param url {@link URL} to make the connection to
+     * @return data received from URL
+     * @throws IOException if the InputStream generated could not be closed
+     */
+    private static String makeHttpRequest(URL url) throws IOException {
+        HttpURLConnection connection = null;
+        InputStream stream = null;
+        String jsonString = null;
+
+        try {
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(15000);
+            connection.setRequestMethod("GET");
+            connection.connect();
+
+            // check response code
+            if (connection.getResponseCode() == 200) {
+                // if good, start reading
+                stream = connection.getInputStream();
+                jsonString = readFromInputStream(stream);
+            } else {
+                Log.e(LOG_TAG, "Unsuccessful response code " + connection.getResponseCode());
+            }
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Problem establishing connection", e);
+        } finally {
+            if (connection != null) connection.disconnect();
+            if (stream != null) stream.close();
+        }
+
+        return jsonString;
+    }
+
+    /**
+     * Reads UTF-8 characters from an {@link InputStream}.
+     *
+     * @param stream {@link InputStream} from which to read
+     * @return {@link String} containing the UTF-8 characters
+     */
+    private static String readFromInputStream(InputStream stream) {
+        // if stream is null do nothing
+        if (stream == null) return null;
+
+        InputStreamReader streamReader = new InputStreamReader(stream, Charset.forName("UTF-8"));
+        BufferedReader reader = new BufferedReader(streamReader);
+        StringBuilder sb = new StringBuilder();
+        try {
+            String line;
+            // while there is still input, continue reading/appending the lines
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            reader.close();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error reading data stream", e);
+        }
+
+        return sb.toString();
     }
 }
