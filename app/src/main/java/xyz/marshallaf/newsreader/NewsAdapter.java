@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -48,7 +50,11 @@ public class NewsAdapter extends ArrayAdapter {
         ((TextView) view.findViewById(R.id.item_subtitle)).setText(article.getSubtitle());
         ((TextView) view.findViewById(R.id.item_section)).setText(article.getSection());
         ((TextView) view.findViewById(R.id.item_author)).setText(article.getAuthor());
-        ((TextView) view.findViewById(R.id.item_date)).setText(article.getPublished());
+
+        // convert article date to local time then set text view
+        Date published = article.getPublished();
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mma z, d MMM yyyy");
+        ((TextView) view.findViewById(R.id.item_date)).setText(sdf.format(published));
 
         // set image view
 

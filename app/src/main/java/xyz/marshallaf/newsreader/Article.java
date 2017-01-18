@@ -5,6 +5,11 @@ import android.util.Log;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * A class for storing information about a news article.
@@ -16,11 +21,14 @@ public class Article {
     // tag for logging
     private final String LOG_TAG = Article.class.getName();
 
+    // pattern of dates returned from Guardian API
+    private final String API_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
     // member variables
     private String mTitle;
     private String mSubtitle;
     private String mAuthor;
-    private String mPublished;
+    private Date mPublished;
     private String mSection;
     private Uri mArticleUrl;
     private URL mImageUrl;
@@ -30,7 +38,7 @@ public class Article {
         mTitle = title;
         mSubtitle = subtitle;
         mAuthor = author;
-        mPublished = published;
+        mPublished = parseDate(published);
         mSection = section;
         mArticleUrl = Uri.parse(articleUrl);
         mImageUrl = parseUrl(imageUrl);
@@ -46,6 +54,19 @@ public class Article {
         return url;
     }
 
+    private Date parseDate(String dateString) {
+        TimeZone tz = TimeZone.getTimeZone("Universal");
+        Calendar cal = Calendar.getInstance(tz);
+        SimpleDateFormat sdf = new SimpleDateFormat(API_DATE_PATTERN);
+        sdf.setCalendar(cal);
+        try {
+            cal.setTime(sdf.parse(dateString));
+        } catch (ParseException e) {
+            cal.setTimeInMillis(0);
+        }
+        return cal.getTime();
+    }
+
     public String getTitle() {
         return mTitle;
     }
@@ -58,7 +79,7 @@ public class Article {
         return mAuthor;
     }
 
-    public String getPublished() {
+    public Date getPublished() {
         return mPublished;
     }
 
