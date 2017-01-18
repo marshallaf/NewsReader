@@ -3,12 +3,9 @@ package xyz.marshallaf.newsreader;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
-import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -26,11 +23,7 @@ public class MainActivity extends AppCompatActivity {
         ListView newsList = (ListView) findViewById(R.id.news_list);
 
         ArrayList<Article> articles = null;
-        try {
-            articles = Utils.getArticlesFromJSON();
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, "JSON parsing failed", e);
-        }
+        //ArrayList<Article> articles = Utils.fetchNews(url);
 
         mAdapter = new NewsAdapter(this, articles);
 
