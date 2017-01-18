@@ -27,13 +27,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         ListView newsList = (ListView) findViewById(R.id.news_list);
 
-        ArrayList<Article> articles = null;
-        //ArrayList<Article> articles = Utils.fetchNews(url);
-
-        mAdapter = new NewsAdapter(this, articles);
-
+        // initialize and bind an adapter for the articles
+        // adapter is empty for now, but loader will populate it
+        mAdapter = new NewsAdapter(this, new ArrayList<Article>());
         newsList.setAdapter(mAdapter);
 
+        // set the click action for each list article item
         newsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -42,6 +41,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 startActivity(intent);
             }
         });
+
+        // start the loader
+        // id = 0 (there's only 1 loader so it doesn't matter)
+        // LoaderCallbacks are implemented here, so (this)
+        getSupportLoaderManager().initLoader(0, null, this);
     }
 
     @Override
