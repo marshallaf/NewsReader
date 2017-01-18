@@ -41,17 +41,7 @@ public class Article {
         mPublished = parseDate(published);
         mSection = section;
         mArticleUrl = Uri.parse(articleUrl);
-        mImageUrl = parseUrl(imageUrl);
-    }
-
-    private URL parseUrl(String urlString) {
-        URL url = null;
-        try {
-            url = new URL(urlString);
-        } catch (MalformedURLException e) {
-            Log.e(LOG_TAG, "Unable to parse url", e);
-        }
-        return url;
+        mImageUrl = Utils.parseUrl(imageUrl);
     }
 
     private Date parseDate(String dateString) {
