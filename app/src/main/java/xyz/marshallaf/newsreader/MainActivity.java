@@ -1,6 +1,8 @@
 package xyz.marshallaf.newsreader;
 
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -9,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +23,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private final String GUARDIAN_BASE_URI = "https://content.guardianapis.com/search";
     private NewsAdapter mAdapter;
+    private ProgressBar mProgressBar;
+    private TextView mInfoText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // get references to layout items
+        mProgressBar = (ProgressBar) findViewById(R.id.list_progress);
+        mInfoText = (TextView) findViewById(R.id.list_info);
         ListView newsList = (ListView) findViewById(R.id.news_list);
 
         // initialize and bind an adapter for the articles
@@ -42,10 +51,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
-        // start the loader
-        // id = 0 (there's only 1 loader so it doesn't matter)
-        // LoaderCallbacks are implemented here, so (this)
-        getSupportLoaderManager().initLoader(0, null, this);
+        // check for internet connection
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {  // there is a connection
+            // start the loader
+            // id = 0 (there's only 1 loader so it doesn't matter)
+            // LoaderCallbacks are implemented here, so (this)
+            getSupportLoaderManager().initLoader(0, null, this);
+        } else {  // there is not a connection
+            // remove progress bar
+            mProgressBar.setVisibility(View.GONE);
+
+            // set no connection text
+            mInfoText.setText("No internet connection.");
+        }
     }
 
     @Override
@@ -63,12 +83,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<List<Article>> loader, List<Article> results) {
+        // remove the loading indicator
+        mProgressBar.setVisibility(View.GONE);
+
+        // set no data text
+        mInfoText.setText("No articles found.");
+
         // clear any data currently in the adapter since we have fresh data
         mAdapter.clear();
 
         // add the fresh data
-        if (results != null && results.size() != 0)
+        if (results != null && results.size() != 0) {
+            mInfoText.setVisibility(View.GONE);
             mAdapter.addAll(results);
+        }
     }
 
     @Override
