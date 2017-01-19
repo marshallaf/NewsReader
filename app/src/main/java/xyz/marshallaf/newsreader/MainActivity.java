@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -69,6 +71,26 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // check if it's the settings menu item
+        if (item.getItemId() == R.id.action_settings) {
+            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(intent);
+        }
+
+        // otherwise call through to the base class
+        return super.onOptionsItemSelected(item);
+    }
+
+    // Loader callbacks
+
+    @Override
     public Loader<List<Article>> onCreateLoader(int id, Bundle args) {
         // build the request url
         Uri.Builder builder = Uri.parse(GUARDIAN_BASE_URI).buildUpon();
@@ -104,4 +126,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // clear any data currently in the adapter
         mAdapter.clear();
     }
+
+    // end of loader callbacks
 }
