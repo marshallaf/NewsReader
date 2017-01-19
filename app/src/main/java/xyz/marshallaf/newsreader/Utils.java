@@ -64,7 +64,7 @@ public final class Utils {
         try {
             url = new URL(urlString);
         } catch (MalformedURLException e) {
-            Log.e(LOG_TAG, "Unable to parse url", e);
+            Log.e(LOG_TAG, "Unable to parse url");
         }
         return url;
     }
