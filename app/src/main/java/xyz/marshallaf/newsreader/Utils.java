@@ -36,16 +36,25 @@ public final class Utils {
         ArrayList<Article> articles = new ArrayList<>(results.length());
 
         for (int i = 0; i < results.length(); i++) {
-            JSONObject result = results.getJSONObject(i);
-            JSONObject fields = result.getJSONObject("fields");
-            String title = result.getString("webTitle");
-            String published = result.getString("webPublicationDate");
-            String section = result.getString("sectionName");
-            String url = result.getString("webUrl");
-            String subtitle = fields.getString("trailText");
-            String author = fields.getString("byline");
-            String imageUrl = fields.getString("thumbnail");
-            articles.add(new Article(title, subtitle, author, published, section, url, imageUrl));
+            try {
+                JSONObject result = results.getJSONObject(i);
+                JSONObject fields = result.optJSONObject("fields");
+                String title = result.getString("webTitle");
+                String published = result.getString("webPublicationDate");
+                String section = result.getString("sectionName");
+                String url = result.getString("webUrl");
+                String subtitle = "";
+                String author = "";
+                String imageUrl = "";
+                if (fields != null) {
+                    subtitle = fields.optString("trailText");
+                    author = fields.optString("byline");
+                    imageUrl = fields.optString("thumbnail");
+                }
+                articles.add(new Article(title, subtitle, author, published, section, url, imageUrl));
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, "Unable to parse single article");
+            }
         }
         return articles;
     }
@@ -79,7 +88,7 @@ public final class Utils {
         try {
             articles = getArticlesFromJSON(jsonString);
         } catch (JSONException e) {
-            Log.e(LOG_TAG, "Unable to parse JSON", e);
+            Log.e(LOG_TAG, "Unable to parse JSON result", e);
         }
 
         return articles;
