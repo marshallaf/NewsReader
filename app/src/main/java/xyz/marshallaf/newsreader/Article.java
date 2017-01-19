@@ -1,9 +1,8 @@
 package xyz.marshallaf.newsreader;
 
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.Log;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,6 +31,7 @@ public class Article {
     private String mSection;
     private Uri mArticleUrl;
     private URL mImageUrl;
+    private Drawable mImage;
 
     public Article(String title, String subtitle, String author,
                    String published, String section, String articleUrl, String imageUrl) {
@@ -83,5 +83,13 @@ public class Article {
 
     public URL getImageUrl() {
         return mImageUrl;
+    }
+
+    public Drawable getImage() {
+        return mImage;
+    }
+
+    public void setImage(Drawable image) {
+        mImage = image;
     }
 }

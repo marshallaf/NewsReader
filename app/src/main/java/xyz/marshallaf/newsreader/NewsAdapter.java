@@ -1,14 +1,17 @@
 package xyz.marshallaf.newsreader;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -57,7 +60,17 @@ public class NewsAdapter extends ArrayAdapter {
         ((TextView) view.findViewById(R.id.item_date)).setText(sdf.format(published));
 
         // set image view
-
+        ImageView imageView = (ImageView) view.findViewById(R.id.item_image);
+        // check if we already have an image
+        Drawable image = article.getImage();
+        if (image != null) {
+            imageView.setImageDrawable(image);
+        } else {  // no cached image, download it
+            URL imageUrl = article.getImageUrl();
+            if (imageUrl != null) {
+                new ImageTask(imageView, article).execute(imageUrl);
+            }
+        }
 
         return view;
     }
@@ -67,4 +80,5 @@ public class NewsAdapter extends ArrayAdapter {
     public Article getItem(int position) {
         return mArticles.get(position);
     }
+
 }
