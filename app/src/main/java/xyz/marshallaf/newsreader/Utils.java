@@ -1,5 +1,7 @@
 package xyz.marshallaf.newsreader;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -154,5 +156,65 @@ public final class Utils {
         }
 
         return sb.toString();
+    }
+
+    public static Bitmap imageFromInputStream(URL url, int reqWidth, int reqHeight) {
+        InputStream dimStream = null;
+        InputStream decodeStream = null;
+
+        // get streams
+        try {
+            dimStream = (InputStream) url.getContent();
+            decodeStream = (InputStream) url.getContent();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Unable to fetch image from " + url.toString());
+        }
+
+        if (dimStream == null || decodeStream == null) return null;
+
+        // first get the dims of the image
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        // returns only image properties, no actual bitmap
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(dimStream, null, options);
+
+        // calculate the desired in sample size
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // decode bitmap to be just large enough
+        options.inJustDecodeBounds = false;
+        Bitmap image = BitmapFactory.decodeStream(decodeStream, null, options);
+
+        // close streams
+        try {
+            dimStream.close();
+            decodeStream.close();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error closing image stream");
+        }
+
+        return image;
+    }
+
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // width and height of image
+        final int width = options.outWidth;
+        final int height = options.outHeight;
+        Log.d(LOG_TAG, "width " + width + ", height " + height);
+        // set to values greater than 1, it downsamples the image when decoding
+        int inSampleSize = 1;
+
+        // if the raw dims are too big
+        if (height > reqHeight || width > reqWidth) {
+            int halfHeight = height / 2;
+            int halfWidth = width / 2;
+
+            // decoder rounds down to nearest power of 2, so no use in being more granular
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 }
