@@ -1,47 +1,48 @@
 package xyz.marshallaf.newsreader;
 
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 
 /**
  * Created by Andrew Marshall on 1/18/2017.
  */
 
-public class ImageTask extends AsyncTask<URL, Void, Drawable> {
+public class ImageTask extends AsyncTask<URL, Void, Bitmap> {
     private final String LOG_TAG = ImageTask.class.getName();
 
-    private final ImageView mImageView;
+    // this reference doesn't prevent it from being garbage collected, if the view is no longer needed
+    private final WeakReference<ImageView> mImageView;
     private final Article mArticle;
 
     public ImageTask(ImageView imageView, Article article) {
         super();
-        mImageView = imageView;
+        mImageView = new WeakReference<ImageView>(imageView);
         mArticle = article;
     }
 
     @Override
-    protected Drawable doInBackground(URL... url) {
+    protected Bitmap doInBackground(URL... url) {
         if (url == null) return null;
 
-        Drawable image = null;
-        try {
-            InputStream stream = (InputStream) url[0].getContent();
-            image = Drawable.createFromStream(stream, null);
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Unable to fetch image from " + url[0].toString());
-        }
-        return image;
+        // get required height/width
+
+
+        return Utils.imageFromInputStream(url[0], 100, 100);
     }
 
     @Override
-    protected void onPostExecute(Drawable image) {
-        mArticle.setImage(image);
-        mImageView.setImageDrawable(image);
+    protected void onPostExecute(Bitmap image) {
+        if (image == null) Log.d(LOG_TAG, "onPost image is null");
+        if (mImageView != null && image != null) {
+            mArticle.setImage(image);
+            ImageView imageView = mImageView.get();
+            if (imageView != null)
+                imageView.setImageBitmap(image);
+        }
     }
 }

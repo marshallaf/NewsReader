@@ -1,7 +1,7 @@
 package xyz.marshallaf.newsreader;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -62,9 +62,9 @@ public class NewsAdapter extends ArrayAdapter {
         // set image view
         ImageView imageView = (ImageView) view.findViewById(R.id.item_image);
         // check if we already have an image
-        Drawable image = article.getImage();
+        Bitmap image = article.getImage();
         if (image != null) {
-            imageView.setImageDrawable(image);
+            imageView.setImageBitmap(image);
         } else {  // no cached image, download it
             URL imageUrl = article.getImageUrl();
             if (imageUrl != null) {
