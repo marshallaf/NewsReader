@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private NewsAdapter mAdapter;
     private ProgressBar mProgressBar;
     private TextView mInfoText;
+    private SharedPreferences mPreferences;
+    private SharedPreferences.OnSharedPreferenceChangeListener mPrefListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 startActivity(intent);
             }
         });
+
+        // set the preferences on change listener
+        mPrefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+                Log.d(LOG_TAG, "preferences have changed");
+                getSupportLoaderManager().restartLoader(0, null, MainActivity.this);
+            }
+        };
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        mPreferences.registerOnSharedPreferenceChangeListener(mPrefListener);
 
         // check for internet connection
         ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
@@ -95,9 +109,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public Loader<List<Article>> onCreateLoader(int id, Bundle args) {
         // get preferences
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String orderByPref = preferences.getString("order_by", getString(R.string.pref_order_by_default));
-        String searchTermPref = preferences.getString("search_term", getString(R.string.pref_search_term_default));
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String orderByPref = mPreferences.getString("order_by", getString(R.string.pref_order_by_default));
+        String searchTermPref = mPreferences.getString("search_term", getString(R.string.pref_search_term_default));
 
         // build the request url
         Uri.Builder builder = Uri.parse(GUARDIAN_BASE_URI).buildUpon();
@@ -135,4 +149,5 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     // end of loader callbacks
+
 }
