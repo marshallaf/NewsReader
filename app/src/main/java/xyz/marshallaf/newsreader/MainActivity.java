@@ -1,10 +1,12 @@
 package xyz.marshallaf.newsreader;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -92,11 +94,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public Loader<List<Article>> onCreateLoader(int id, Bundle args) {
+        // get preferences
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String orderByPref = preferences.getString("order_by", getString(R.string.pref_order_by_default));
+        String searchTermPref = preferences.getString("search_term", getString(R.string.pref_search_term_default));
+
         // build the request url
         Uri.Builder builder = Uri.parse(GUARDIAN_BASE_URI).buildUpon();
-        builder.appendQueryParameter("order-by", "newest");
+        builder.appendQueryParameter("order-by", orderByPref);
         builder.appendQueryParameter("show-fields", "trailText%2Cbyline%2Cthumbnail");
-        builder.appendQueryParameter("q", "football");
+        builder.appendQueryParameter("q", searchTermPref);
         builder.appendQueryParameter("api-key", getString(R.string.guardian_api_key));
 
         // create the loader
