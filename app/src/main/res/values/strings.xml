@@ -21,4 +21,5 @@
 
     <!-- Menu items -->
     <string name="settings_title">Settings</string>
+    <string name="search_prompt">Enter search term</string>
 </resources>
