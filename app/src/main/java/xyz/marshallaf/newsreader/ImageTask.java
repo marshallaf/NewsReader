@@ -39,10 +39,9 @@ public class ImageTask extends AsyncTask<Void, Void, Bitmap> {
     protected void onPostExecute(Bitmap image) {
         if (image == null) Log.d(LOG_TAG, "onPost image is null");
 
-        if (isCancelled()) image = null;
+        mArticle.setImage(image);
 
         if (mImageViewRef != null && image != null) {
-            mArticle.setImage(image);
             ImageView imageView = mImageViewRef.get();
             // get the task that is currently associated with the referenced imageview
             ImageTask imageTask = NewsAdapter.getImageTask(imageView);
