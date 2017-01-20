@@ -1,5 +1,6 @@
 package xyz.marshallaf.newsreader;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -10,16 +11,18 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,15 +63,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
-        // set the click action for floating action button
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "FAB FAB FAB!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         // set the preferences on change listener
         mPrefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
@@ -79,6 +73,40 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         };
         mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         mPreferences.registerOnSharedPreferenceChangeListener(mPrefListener);
+
+        // set the click action for floating action button
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
+                View prompt = inflater.inflate(R.layout.prompt, null);
+
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                dialogBuilder.setView(prompt);
+
+                final EditText searchTerm = (EditText) prompt.findViewById(R.id.search_prompt_input);
+
+                // set actions on alert dialog
+                dialogBuilder
+                        .setPositiveButton("Search", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                SharedPreferences.Editor editor = mPreferences.edit();
+                                editor.putString("search_term", searchTerm.getText().toString());
+                                editor.commit();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        });
+
+                dialogBuilder.create().show();
+            }
+        });
 
         // check for internet connection
         ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
