@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/item_image"
         android:textColor="@android:color/black"
+        android:textStyle="bold"
         android:textSize="14sp"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="2dp"
