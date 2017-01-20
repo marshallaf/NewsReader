@@ -2,9 +2,9 @@
 
 This is an app I made as the final project for the Udacity course [Android Basics: Networking](https://www.udacity.com/course/android-basics-networking--ud843). The assignment was to build an app that displays news article headlines from the [API](http://open-platform.theguardian.com/documentation/) provided by [*The Guardian*](https://www.theguardian.com/).
 
-![alt text](https://github.com/marshallaf/NewsReader/blob/master/screen1_600.jpg "Main app screen")
-![alt text](https://github.com/marshallaf/NewsReader/blob/master/screen2_600.jpg "Search prompt")
-![alt text](https://github.com/marshallaf/NewsReader/blob/master/screen3_600.jpg "Settings")
+![alt text](https://github.com/marshallaf/NewsReader/blob/master/screen1_w280.jpg "Main app screen")
+![alt text](https://github.com/marshallaf/NewsReader/blob/master/screen2_w280.jpg "Search prompt")
+![alt text](https://github.com/marshallaf/NewsReader/blob/master/screen3_w280.jpg "Settings")
 
 
 ## The course
