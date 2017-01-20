@@ -6,22 +6,32 @@
     android:layout_height="match_parent"
     tools:context="xyz.marshallaf.newsreader.MainActivity">
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:src="@android:drawable/ic_menu_search"/>
+
     <ListView
         android:id="@+id/news_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:visibility="gone"/>
+        android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/list_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        tools:text="No internet connection."/>
+        tools:text="No internet connection."
+        tools:visibility="gone"/>
 
     <ProgressBar
         android:id="@+id/list_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        tools:visibility="gone"/>
 </RelativeLayout>
