@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private TextView mInfoText;
     private SharedPreferences mPreferences;
     private SharedPreferences.OnSharedPreferenceChangeListener mPrefListener;
+    private int mPage = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,11 +65,30 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
+
+        newsList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                // if we're at the bottom of the list
+                if (firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount != 0) {
+                    // load the next page of results
+                    mPage++;
+                    getSupportLoaderManager().restartLoader(0, null, MainActivity.this);
+                }
+            }
+        });
+
         // set the preferences on change listener
         mPrefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
                 Log.d(LOG_TAG, "preferences have changed");
+                mPage = 1;
                 getSupportLoaderManager().restartLoader(0, null, MainActivity.this);
             }
         };
@@ -156,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Uri.Builder builder = Uri.parse(GUARDIAN_BASE_URI).buildUpon();
         builder.appendQueryParameter("order-by", orderByPref);
         builder.appendQueryParameter("show-fields", "trailText%2Cbyline%2Cthumbnail");
+        builder.appendQueryParameter("page", Integer.toString(mPage));
         builder.appendQueryParameter("q", searchTermPref);
         builder.appendQueryParameter("api-key", getString(R.string.guardian_api_key));
 
@@ -171,8 +193,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // set no data text
         mInfoText.setText("No articles found.");
 
-        // clear any data currently in the adapter since we have fresh data
-        mAdapter.clear();
+        // if we're loading the first page then we start fresh
+        if (mPage == 1) {
+            // clear any data currently in the adapter since we have fresh data
+            mAdapter.clear();
+        }
 
         // add the fresh data
         if (results != null && results.size() != 0) {
