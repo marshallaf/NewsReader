@@ -12,37 +12,47 @@ import java.net.URL;
  * Created by Andrew Marshall on 1/18/2017.
  */
 
-public class ImageTask extends AsyncTask<URL, Void, Bitmap> {
+public class ImageTask extends AsyncTask<Void, Void, Bitmap> {
     private final String LOG_TAG = ImageTask.class.getName();
 
     // this reference doesn't prevent it from being garbage collected, if the view is no longer needed
-    private final WeakReference<ImageView> mImageView;
+    private final WeakReference<ImageView> mImageViewRef;
     private final Article mArticle;
+    private final URL mUrl;
 
-    public ImageTask(ImageView imageView, Article article) {
+
+    public ImageTask(URL imageUrl, ImageView imageView, Article article) {
         super();
-        mImageView = new WeakReference<ImageView>(imageView);
+        mImageViewRef = new WeakReference<ImageView>(imageView);
         mArticle = article;
+        mUrl = imageUrl;
     }
 
     @Override
-    protected Bitmap doInBackground(URL... url) {
-        if (url == null) return null;
+    protected Bitmap doInBackground(Void... voids) {
+        if (mUrl == null) return null;
 
-        // get required height/width
-
-
-        return Utils.imageFromInputStream(url[0], 100, 100);
+        return Utils.imageFromInputStream(mUrl, 100, 100);
     }
 
     @Override
     protected void onPostExecute(Bitmap image) {
         if (image == null) Log.d(LOG_TAG, "onPost image is null");
-        if (mImageView != null && image != null) {
+
+        if (isCancelled()) image = null;
+
+        if (mImageViewRef != null && image != null) {
             mArticle.setImage(image);
-            ImageView imageView = mImageView.get();
-            if (imageView != null)
+            ImageView imageView = mImageViewRef.get();
+            // get the task that is currently associated with the referenced imageview
+            ImageTask imageTask = NewsAdapter.getImageTask(imageView);
+            // if this task is still the valid one, set the image
+            if (this == imageTask && imageView != null)
                 imageView.setImageBitmap(image);
         }
+    }
+
+    public URL getUrl() {
+        return mUrl;
     }
 }
